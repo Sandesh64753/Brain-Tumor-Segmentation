@@ -1,0 +1,3 @@
+trained_models/classification/brain_tumor_model-2.pth
+trained_models/segmentation/best_brisc_unet.pth
+.env

@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Environment
+.env
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Model weights
+*.pth
+*.pt
+*.h5
+*.onnx
+
+# Generated files
+backend/uploads/
+backend/outputs/
+backend/reports/
+
+# Node
+frontend/node_modules/
+
+# Build
+frontend/dist/
+
+# Python virtual environment
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

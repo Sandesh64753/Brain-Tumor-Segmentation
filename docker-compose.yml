@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: neuroscan_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_DB: neuroscan_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: neuroscan_backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgrespassword@postgres:5432/neuroscan_db
+      - SECRET_KEY=neuroscan_super_secret_jwt_key_2026_change_in_production!
+      - DEVICE=cpu
+      - CLASSIFICATION_MODEL_PATH=trained_models/classification/best_classifier.pth
+      - SEGMENTATION_MODEL_PATH=trained_models/segmentation/best_segmenter.pth
+    depends_on:
+      - postgres
+    volumes:
+      - ./backend/uploads:/app/uploads
+      - ./backend/outputs:/app/outputs
+      - ./backend/reports:/app/reports
+      - ./backend/trained_models:/app/trained_models
+    restart: always
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: neuroscan_frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    restart: always
+
+volumes:
+  postgres_data:
