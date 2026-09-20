@@ -21,6 +21,8 @@ __pycache__/
 backend/uploads/
 backend/outputs/
 backend/reports/
+*.pdf
+*(1).*
 
 # Node
 frontend/node_modules/

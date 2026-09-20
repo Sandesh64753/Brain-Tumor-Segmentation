@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Download, Eye, Layers, ZoomIn, ZoomOut, RotateCcw, Sliders } from 'lucide-react';
+import { Eye, Layers, ZoomIn, ZoomOut, RotateCcw, Sliders } from 'lucide-react';
 import { Visualizations } from '../../types';
 
 interface InteractiveVisualizerProps {
@@ -7,20 +7,11 @@ interface InteractiveVisualizerProps {
   filename: string;
 }
 
-export const InteractiveVisualizer: React.FC<InteractiveVisualizerProps> = ({ visualizations, filename }) => {
+export const InteractiveVisualizer: React.FC<InteractiveVisualizerProps> = ({ visualizations }) => {
   const [showMask, setShowMask] = useState(true);
   const [showGradcam, setShowGradcam] = useState(true);
   const [opacity, setOpacity] = useState(70); // 0 to 100
   const [zoomLevel, setZoomLevel] = useState(100); // 50 to 200
-
-  const handleDownloadCombined = () => {
-    const link = document.createElement('a');
-    link.href = visualizations.overlay;
-    link.download = `${filename}_combined_visualization.png`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
 
   const currentDisplaySrc = () => {
     if (showMask && showGradcam) return visualizations.overlay;
@@ -40,14 +31,6 @@ export const InteractiveVisualizer: React.FC<InteractiveVisualizerProps> = ({ vi
             Adjust opacity, toggle layers, pan & zoom for detailed anatomical research inspection
           </p>
         </div>
-
-        <button
-          type="button"
-          onClick={handleDownloadCombined}
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-semibold shadow-sm transition-colors flex items-center gap-2 border border-blue-500"
-        >
-          <Download className="w-4 h-4" /> Download Visualization
-        </button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">

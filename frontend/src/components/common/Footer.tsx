@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="bg-navy-950 border-t border-navy-800 text-slate-400 text-xs py-8">
+    <footer className="bg-navy-950 border-t border-navy-800 text-slate-400 text-xs py-8 mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         
         {/* Top Disclaimer Banner */}

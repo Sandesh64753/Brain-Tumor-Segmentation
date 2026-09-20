@@ -109,16 +109,17 @@ export const AnalysisPage: React.FC = () => {
   const currentStep = analysisResult ? 3 : isLoading ? 2 : 1;
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
-      <Navbar />
+    <div className="min-h-screen flex flex-row bg-slate-50 text-slate-900">
+      {/* Dark Clinical Sidebar Navigation (Fixed width w-64) */}
+      <div className="hidden lg:block shrink-0">
+        <Sidebar />
+      </div>
 
-      <div className="flex-1 flex">
-        {/* Dark Clinical Sidebar Navigation */}
-        <div className="hidden lg:block">
-          <Sidebar />
-        </div>
+      {/* Main Content Area Container (Spans right side of screen) */}
+      <div className="flex-1 flex flex-col min-h-screen min-w-0">
+        <Navbar />
 
-        {/* Main Content Workspace */}
+        {/* Main Workspace */}
         <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full space-y-6">
           
           {/* Header Title Section */}
@@ -312,9 +313,9 @@ export const AnalysisPage: React.FC = () => {
           )}
 
         </main>
-      </div>
 
-      <Footer />
+        <Footer />
+      </div>
     </div>
   );
 };

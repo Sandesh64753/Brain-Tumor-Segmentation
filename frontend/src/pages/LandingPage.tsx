@@ -13,9 +13,9 @@ export const LandingPage: React.FC = () => {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="bg-navy-950 text-white relative overflow-hidden border-b border-navy-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      <section className="bg-navy-950 text-white relative overflow-hidden border-b border-navy-800 min-h-screen flex items-center justify-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10 w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center justify-center">
             
             {/* Left Hero Text */}
             <div className="lg:col-span-7 space-y-6">

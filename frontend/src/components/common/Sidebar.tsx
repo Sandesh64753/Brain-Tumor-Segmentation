@@ -21,7 +21,7 @@ export const Sidebar: React.FC = () => {
   ];
 
   return (
-    <aside className="w-64 bg-navy-950 border-r border-navy-800 flex flex-col justify-between min-h-[calc(100vh-4rem)] text-slate-300 select-none">
+    <aside className="w-64 bg-navy-950 border-r border-navy-800 flex flex-col justify-between sticky top-0 h-screen overflow-y-auto text-slate-300 select-none shrink-0">
       <div className="py-6 px-4 space-y-6">
         
         {/* Navigation Group Header */}
@@ -50,18 +50,6 @@ export const Sidebar: React.FC = () => {
           </nav>
         </div>
 
-        {/* System Status Card */}
-        <div className="mx-1 p-3.5 rounded-lg bg-navy-900 border border-navy-800 space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wide flex items-center gap-1.5">
-              <Cpu className="w-3.5 h-3.5 text-blue-400" /> PyTorch Engine
-            </span>
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-          </div>
-          <p className="text-xs text-slate-300 font-medium">Device: CPU / CUDA Active</p>
-          <p className="text-[11px] text-slate-400">Classification + UNet Loaded</p>
-        </div>
-
         {user?.role === 'admin' && (
           <div>
             <p className="px-3 text-[11px] font-semibold font-mono uppercase tracking-wider text-slate-500 mb-2">
@@ -85,7 +73,19 @@ export const Sidebar: React.FC = () => {
       </div>
 
       {/* User Footer Settings */}
-      <div className="p-4 border-t border-navy-900 bg-navy-950/80 space-y-2">
+      <div className="p-4 border-t border-navy-900 bg-navy-950/80 space-y-3">
+        {/* System Status Card */}
+        <div className="p-3.5 rounded-lg bg-navy-900 border border-navy-800 space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wide flex items-center gap-1.5">
+              <Cpu className="w-3.5 h-3.5 text-blue-400" /> PyTorch Engine
+            </span>
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          </div>
+          <p className="text-xs text-slate-300 font-medium">Device: CPU / CUDA Active</p>
+          <p className="text-[11px] text-slate-400">Classification + UNet Loaded</p>
+        </div>
+
         <NavLink
           to="/app/profile"
           className={({ isActive }) =>

@@ -67,13 +67,13 @@ export const HistoryPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
-      <Navbar />
+    <div className="min-h-screen flex flex-row bg-slate-50 text-slate-900">
+      <div className="hidden lg:block shrink-0">
+        <Sidebar />
+      </div>
 
-      <div className="flex-1 flex">
-        <div className="hidden lg:block">
-          <Sidebar />
-        </div>
+      <div className="flex-1 flex flex-col min-h-screen min-w-0">
+        <Navbar />
 
         <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full space-y-6">
           
@@ -266,9 +266,9 @@ export const HistoryPage: React.FC = () => {
           )}
 
         </main>
-      </div>
 
-      <Footer />
+        <Footer />
+      </div>
     </div>
   );
 };
