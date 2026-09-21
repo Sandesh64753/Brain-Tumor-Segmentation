@@ -44,44 +44,50 @@ export const ModelsPage: React.FC = () => {
             <p className="text-xs font-mono">Fetching PyTorch model registry specifications...</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {models.map((model) => (
-              <div key={model.id} className="bg-white rounded-xl border border-slate-200 p-6 space-y-4 shadow-sm flex flex-col justify-between">
+              <div key={model.id} className="bg-white rounded-xl border border-slate-200 p-5 space-y-4 shadow-sm flex flex-col justify-between">
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between border-b pb-3">
-                    <span className="text-xs font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">
+                  <div className="flex items-center justify-between border-b pb-2.5">
+                    <span className="text-[11px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">
                       {model.type}
                     </span>
                     <span className="text-xs font-mono text-slate-400 font-bold">{model.version}</span>
                   </div>
 
-                  <h3 className="text-lg font-bold text-slate-900">{model.name}</h3>
-                  <p className="text-xs text-slate-600 leading-relaxed">{model.description}</p>
+                  <h3 className="text-base font-bold text-slate-900">{model.name}</h3>
+                  <p className="text-xs text-slate-600 leading-relaxed line-clamp-3">{model.description}</p>
 
-                  <div className="space-y-2 pt-2 border-t border-slate-100 text-xs font-mono text-slate-700">
+                  <div className="space-y-1.5 pt-2 border-t border-slate-100 text-[11px] font-mono text-slate-700">
                     <div className="flex justify-between">
                       <span className="text-slate-400">Framework:</span>
                       <span className="font-bold text-slate-900">{model.framework}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-slate-400">Architecture:</span>
-                      <span className="font-bold text-blue-600">{model.architecture}</span>
+                      <span className="font-bold text-blue-600 truncate ml-2 text-right">{model.architecture}</span>
                     </div>
+                    {model.threshold !== undefined && (
+                      <div className="flex justify-between">
+                        <span className="text-slate-400">Recon Threshold:</span>
+                        <span className="font-semibold text-emerald-600">{model.threshold}</span>
+                      </div>
+                    )}
                     <div className="flex justify-between">
                       <span className="text-slate-400">Input Data:</span>
-                      <span>{model.input}</span>
+                      <span className="truncate ml-2 text-right">{model.input}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-slate-400">Output Signal:</span>
-                      <span className="font-semibold">{model.output}</span>
+                      <span className="font-semibold truncate ml-2 text-right">{model.output}</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-mono">
+                <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs font-mono">
                   <span className="text-slate-400">Status:</span>
                   <span className="text-emerald-700 font-bold flex items-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Active Adapter Loaded
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Active
                   </span>
                 </div>
               </div>

@@ -21,7 +21,7 @@ export const Sidebar: React.FC = () => {
   ];
 
   return (
-    <aside className="w-64 bg-navy-950 border-r border-navy-800 flex flex-col justify-between sticky top-0 h-screen overflow-y-auto text-slate-300 select-none shrink-0">
+    <aside className="w-64 bg-navy-950 border-r border-navy-800 flex flex-col justify-between sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto text-slate-300 select-none shrink-0">
       <div className="py-6 px-4 space-y-6">
         
         {/* Navigation Group Header */}
@@ -49,27 +49,6 @@ export const Sidebar: React.FC = () => {
             ))}
           </nav>
         </div>
-
-        {user?.role === 'admin' && (
-          <div>
-            <p className="px-3 text-[11px] font-semibold font-mono uppercase tracking-wider text-slate-500 mb-2">
-              ADMINISTRATION
-            </p>
-            <NavLink
-              to="/app/admin"
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-all ${
-                  isActive
-                    ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30'
-                    : 'text-slate-400 hover:text-slate-100 hover:bg-navy-900'
-                }`
-              }
-            >
-              <Shield className="w-4 h-4 shrink-0 text-indigo-400" />
-              <span>Admin Dashboard</span>
-            </NavLink>
-          </div>
-        )}
       </div>
 
       {/* User Footer Settings */}

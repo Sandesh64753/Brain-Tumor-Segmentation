@@ -36,27 +36,46 @@ export const AnalysisPage: React.FC = () => {
     }
   };
 
-  // Helper to generate sample MRI files locally for demonstration
-  const handleLoadSample = (sampleType: string) => {
+  // Helper to load sample files from public/samples with fallback
+  const handleLoadSample = async (sampleType: string) => {
     setErrorMsg(null);
     setAnalysisResult(null);
 
+    const sampleMap: Record<string, { path: string; filename: string; mime: string }> = {
+      glioma: { path: '/samples/sample_glioma.jpg', filename: 'sample_glioma_mri.jpg', mime: 'image/jpeg' },
+      meningioma: { path: '/samples/sample_meningioma.jpg', filename: 'sample_meningioma_mri.jpg', mime: 'image/jpeg' },
+      notumor: { path: '/samples/sample_notumor.jpg', filename: 'sample_notumor_mri.jpg', mime: 'image/jpeg' },
+      pituitary: { path: '/samples/sample_pituitary.jpg', filename: 'sample_pituitary_mri.jpg', mime: 'image/jpeg' },
+      invalid: { path: '/samples/sample_invalid.png', filename: 'sample_non_mri_graphic.png', mime: 'image/png' },
+    };
+
+    const target = sampleMap[sampleType] || sampleMap.glioma;
+    try {
+      const resp = await fetch(target.path);
+      if (resp.ok) {
+        const blob = await resp.blob();
+        const file = new File([blob], target.filename, { type: target.mime });
+        setSelectedFile(file);
+        return;
+      }
+    } catch (e) {
+      console.warn("Could not fetch sample from static assets, falling back to canvas generation.");
+    }
+
+    // Fallback: draw brain slice background
     const canvas = document.createElement('canvas');
     canvas.width = 224;
     canvas.height = 224;
     const ctx = canvas.getContext('2d');
     if (ctx) {
-      // Draw brain slice background
       ctx.fillStyle = '#050B14';
       ctx.fillRect(0, 0, 224, 224);
 
-      // Draw brain contour
       ctx.fillStyle = '#26334D';
       ctx.beginPath();
       ctx.ellipse(112, 112, 85, 95, 0, 0, Math.PI * 2);
       ctx.fill();
 
-      // Brain tissue texture
       ctx.fillStyle = '#405275';
       ctx.beginPath();
       ctx.ellipse(112, 112, 70, 80, 0, 0, Math.PI * 2);
@@ -109,18 +128,20 @@ export const AnalysisPage: React.FC = () => {
   const currentStep = analysisResult ? 3 : isLoading ? 2 : 1;
 
   return (
-    <div className="min-h-screen flex flex-row bg-slate-50 text-slate-900">
-      {/* Dark Clinical Sidebar Navigation (Fixed width w-64) */}
-      <div className="hidden lg:block shrink-0">
-        <Sidebar />
-      </div>
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 w-full">
+      {/* Full-width Top Navigation */}
+      <Navbar />
 
-      {/* Main Content Area Container (Spans right side of screen) */}
-      <div className="flex-1 flex flex-col min-h-screen min-w-0">
-        <Navbar />
+      <div className="flex-1 flex flex-row w-full min-h-0">
+        {/* Dark Clinical Sidebar Navigation (Fixed width w-64) */}
+        <div className="hidden lg:block shrink-0">
+          <Sidebar />
+        </div>
 
-        {/* Main Workspace */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full space-y-6">
+        {/* Main Content Area Container */}
+        <div className="flex-1 flex flex-col min-w-0">
+          {/* Main Workspace */}
+          <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full space-y-6">
           
           {/* Header Title Section */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
@@ -317,5 +338,6 @@ export const AnalysisPage: React.FC = () => {
         <Footer />
       </div>
     </div>
-  );
+  </div>
+);
 };

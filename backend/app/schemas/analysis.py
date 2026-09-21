@@ -2,6 +2,14 @@ from datetime import datetime
 from typing import Dict, Optional
 from pydantic import BaseModel
 
+class MriValidationResponse(BaseModel):
+    is_mri: bool
+    stage: str # 'heuristic', 'autoencoder', 'bypass', 'format_error'
+    reason: Optional[str] = None
+    recon_error: Optional[float] = None
+    threshold: Optional[float] = None
+    message: str
+
 class ClassificationResult(BaseModel):
     predicted_class: str
     confidence: float

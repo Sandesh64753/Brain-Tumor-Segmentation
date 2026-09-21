@@ -67,17 +67,19 @@ export const HistoryPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-row bg-slate-50 text-slate-900">
-      <div className="hidden lg:block shrink-0">
-        <Sidebar />
-      </div>
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 w-full">
+      {/* Full-width Top Navigation */}
+      <Navbar />
 
-      <div className="flex-1 flex flex-col min-h-screen min-w-0">
-        <Navbar />
+      <div className="flex-1 flex flex-row w-full min-h-0">
+        <div className="hidden lg:block shrink-0">
+          <Sidebar />
+        </div>
 
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full space-y-6">
-          
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+        <div className="flex-1 flex flex-col min-w-0">
+          <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full space-y-6">
+            
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
             <div>
               <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 font-sans">
                 Analysis History
@@ -270,5 +272,6 @@ export const HistoryPage: React.FC = () => {
         <Footer />
       </div>
     </div>
-  );
+  </div>
+);
 };

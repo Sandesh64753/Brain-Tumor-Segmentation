@@ -1,5 +1,5 @@
 export interface User {
-  id: str;
+  id: string;
   full_name: string;
   email: string;
   role: 'user' | 'admin';
@@ -11,6 +11,15 @@ export interface AuthState {
   token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+}
+
+export interface MriValidationResult {
+  is_mri: boolean;
+  stage: 'heuristic' | 'autoencoder' | 'bypass' | 'format_error' | 'exception';
+  reason?: string | null;
+  recon_error?: number | null;
+  threshold?: number | null;
+  message: string;
 }
 
 export interface ClassificationResult {
@@ -74,6 +83,7 @@ export interface ModelMetadata {
   path?: string;
   class_names?: string[];
   target_layer?: string;
+  threshold?: number;
 }
 
 export interface ContactForm {
@@ -81,20 +91,4 @@ export interface ContactForm {
   email: string;
   subject: string;
   message: string;
-}
-
-export interface AdminStats {
-  metrics: {
-    total_users: number;
-    total_analyses: number;
-    analyses_today: number;
-    tumor_detected_count: number;
-    no_tumor_count: number;
-  };
-  system_status: {
-    database_connected: boolean;
-    device: string;
-    classification_model_loaded: boolean;
-    segmentation_model_loaded: boolean;
-  };
 }

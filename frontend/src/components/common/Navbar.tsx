@@ -17,9 +17,9 @@ export const Navbar: React.FC = () => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <header className="bg-navy-900 border-b border-navy-800 text-white sticky top-0 z-40 shadow-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+    <header className="bg-navy-900 border-b border-navy-800 text-white sticky top-0 z-40 shadow-md w-full">
+      <div className="w-full px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 w-full">
           
           {/* Logo & Subtitle */}
           <Link to={isAuthenticated ? "/app" : "/"} className="flex items-center gap-3 group">
@@ -110,19 +110,6 @@ export const Navbar: React.FC = () => {
             >
               Contact
             </Link>
-
-            {user?.role === 'admin' && (
-              <Link
-                to="/app/admin"
-                className={`px-3 py-1.5 rounded-md text-xs font-semibold tracking-wide uppercase transition-colors flex items-center gap-1.5 ${
-                  isActive('/app/admin')
-                    ? 'bg-indigo-600 text-white'
-                    : 'bg-indigo-950/80 text-indigo-300 border border-indigo-700/50 hover:bg-indigo-900'
-                }`}
-              >
-                <Shield className="w-3.5 h-3.5 text-indigo-400" /> Admin
-              </Link>
-            )}
           </nav>
 
           {/* Right Action / Profile Menu */}

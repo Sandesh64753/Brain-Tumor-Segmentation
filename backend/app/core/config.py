@@ -29,6 +29,8 @@ class Settings(BaseSettings):
     # Machine Learning Settings
     CLASSIFICATION_MODEL_PATH: str = "trained_models/classification/brain_tumor_model-2.pth"
     SEGMENTATION_MODEL_PATH: str = "trained_models/segmentation/best_brisc_unet.pth"
+    GATEKEEPER_MODEL_PATH: str = "trained_models/gatekeeper/mri_autoencoder.pt"
+    GATEKEEPER_THRESHOLD_PATH: str = "trained_models/gatekeeper/mri_threshold.txt"
     DEVICE: str = Field(default="cpu")
     
     CLASS_NAMES: Union[str, List[str]] = '["Glioma", "Meningioma", "No Tumor", "Pituitary"]'
@@ -68,3 +70,4 @@ os.makedirs(settings.OUTPUT_DIR, exist_ok=True)
 os.makedirs(settings.REPORT_DIR, exist_ok=True)
 os.makedirs(os.path.join(settings.TRAINED_MODELS_DIR, "classification"), exist_ok=True)
 os.makedirs(os.path.join(settings.TRAINED_MODELS_DIR, "segmentation"), exist_ok=True)
+os.makedirs(os.path.join(settings.TRAINED_MODELS_DIR, "gatekeeper"), exist_ok=True)

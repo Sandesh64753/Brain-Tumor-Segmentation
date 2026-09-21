@@ -13,11 +13,10 @@ import { RegisterPage } from './pages/RegisterPage';
 import { AnalysisPage } from './pages/AnalysisPage';
 import { HistoryPage } from './pages/HistoryPage';
 import { ProfilePage } from './pages/ProfilePage';
-import { AdminDashboardPage } from './pages/AdminDashboardPage';
 import { Loader2 } from 'lucide-react';
 
-const ProtectedRoute: React.FC<{ children: React.ReactNode; adminOnly?: boolean }> = ({ children, adminOnly }) => {
-  const { isAuthenticated, isLoading, user } = useAuth();
+const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
 
   if (isLoading) {
@@ -31,10 +30,6 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode; adminOnly?: boolean 
 
   if (!isAuthenticated) {
     return <Navigate to="/login" state={{ message: "Please sign in to use NeuroScan AI analysis." }} replace />;
-  }
-
-  if (adminOnly && user?.role !== 'admin') {
-    return <Navigate to="/app" replace />;
   }
 
   return <>{children}</>;
@@ -76,14 +71,6 @@ export const App: React.FC = () => {
             element={
               <ProtectedRoute>
                 <ProfilePage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/app/admin"
-            element={
-              <ProtectedRoute adminOnly>
-                <AdminDashboardPage />
               </ProtectedRoute>
             }
           />

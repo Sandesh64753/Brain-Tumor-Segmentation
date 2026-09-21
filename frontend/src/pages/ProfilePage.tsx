@@ -54,15 +54,16 @@ export const ProfilePage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 w-full">
       <Navbar />
 
-      <div className="flex-1 flex">
-        <div className="hidden lg:block">
+      <div className="flex-1 flex flex-row w-full min-h-0">
+        <div className="hidden lg:block shrink-0">
           <Sidebar />
         </div>
 
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto w-full space-y-6">
+        <div className="flex-1 flex flex-col min-w-0">
+          <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto w-full space-y-6">
           
           <div className="border-b border-slate-200 pb-4">
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 font-sans">
@@ -171,9 +172,9 @@ export const ProfilePage: React.FC = () => {
           </div>
 
         </main>
+        <Footer />
       </div>
-
-      <Footer />
     </div>
-  );
+  </div>
+);
 };

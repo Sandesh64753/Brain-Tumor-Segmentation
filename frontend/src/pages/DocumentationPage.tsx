@@ -76,22 +76,42 @@ export const DocumentationPage: React.FC = () => {
           <p className="text-xs text-slate-600 leading-relaxed">
             The U-Net model predicts a binary lesion mask isolating abnormal tissue boundaries. Output telemetry includes total non-zero tumor surface pixels and relative spatial percentage of the total brain slice image.
           </p>
+          <p className="text-xs text-slate-600 leading-relaxed">
+            <strong>No-Tumor Override:</strong> When the classification model predicts <strong>"No Tumor"</strong>, the U-Net segmentation step is bypassed entirely. A blank black mask is produced with tumor surface area set to <strong>0 px</strong> and brain slice coverage set to <strong>0.00%</strong>. This ensures consistency between classification and segmentation outputs.
+          </p>
         </section>
 
-        {/* Section 5: Understanding Grad-CAM */}
+        {/* Section 5: MRI Gatekeeper */}
         <section className="bg-white p-6 rounded-xl border border-slate-200 space-y-3 shadow-sm">
           <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-            <Eye className="w-5 h-5 text-indigo-600" /> 5. Grad-CAM Explainability
+            <ShieldAlert className="w-5 h-5 text-red-600" /> 5. MRI Gatekeeper (Input Validation)
+          </h2>
+          <p className="text-xs text-slate-600 leading-relaxed">
+            Before any tumor analysis begins, uploaded images are validated by the <strong>MRI Gatekeeper</strong> — a Convolutional Autoencoder trained exclusively on genuine brain MRI scans. The system uses a 2-stage verification pipeline:
+          </p>
+          <ul className="list-disc list-inside text-xs text-slate-600 space-y-1 font-mono pl-2">
+            <li><strong>Stage 1 (Heuristics):</strong> Rejects images with excessive color spread, zero contrast, or resolution below 64×64 pixels.</li>
+            <li><strong>Stage 2 (Autoencoder):</strong> Computes reconstruction MSE. If error exceeds the calibrated threshold (0.001505), the image is rejected.</li>
+          </ul>
+          <p className="text-xs text-slate-600 leading-relaxed">
+            Non-MRI images are flagged as <strong>"Un-validated (Non-MRI)"</strong> in the upload zone, and the <strong>"Run AI Analysis"</strong> button is disabled. The backend also enforces this check at the prediction endpoint, returning an HTTP 400 error for un-validated images.
+          </p>
+        </section>
+
+        {/* Section 6: Understanding Grad-CAM */}
+        <section className="bg-white p-6 rounded-xl border border-slate-200 space-y-3 shadow-sm">
+          <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <Eye className="w-5 h-5 text-indigo-600" /> 6. Grad-CAM Explainability
           </h2>
           <p className="text-xs text-slate-600 leading-relaxed">
             Gradient-weighted Class Activation Mapping (Grad-CAM) calculates feature map activations at the target convolutional layer during backward propagation to generate intuitive heatmaps overlaying the original scan.
           </p>
         </section>
 
-        {/* Section 6: Privacy & Security */}
+        {/* Section 7: Privacy & Security */}
         <section className="bg-white p-6 rounded-xl border border-slate-200 space-y-3 shadow-sm">
           <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-            <Lock className="w-5 h-5 text-emerald-600" /> 6. Privacy & Security
+            <Lock className="w-5 h-5 text-emerald-600" /> 7. Privacy & Security
           </h2>
           <p className="text-xs text-slate-600 leading-relaxed">
             Uploaded images are stored on secure filesystem paths using unique UUIDs. Passwords are key-stretched with bcrypt algorithms. Database queries use parameterized SQLAlchemy ORM to prevent SQL injection vulnerabilities.

@@ -8,8 +8,24 @@ router = APIRouter(prefix="/models", tags=["Models Metadata"])
 def get_models_metadata():
     class_adapter = model_loader.classification_adapter
     seg_adapter = model_loader.segmentation_adapter
+    gatekeeper_adapter = model_loader.gatekeeper_adapter
 
     return [
+        {
+            "id": "gatekeeper",
+            "name": "MRI Scan Gatekeeper / Validator",
+            "type": "Anomaly Detection",
+            "framework": "PyTorch",
+            "version": "v1.0",
+            "input": "Uploaded Image (JPG, PNG, DICOM)",
+            "output": "MRI Validity Decision & Reconstruction MSE",
+            "architecture": "Deep Convolutional Autoencoder",
+            "is_loaded": gatekeeper_adapter.is_loaded if gatekeeper_adapter else False,
+            "device": settings.DEVICE,
+            "path": settings.GATEKEEPER_MODEL_PATH,
+            "threshold": gatekeeper_adapter.threshold if gatekeeper_adapter else 0.001505,
+            "description": "Autoencoder-based gatekeeper that reconstructs brain MRI slices and rejects non-MRI inputs with high reconstruction error (MSE > threshold)."
+        },
         {
             "id": "classification",
             "name": "Brain Tumor Classification Model",

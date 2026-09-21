@@ -1,4 +1,4 @@
-import { AuthState, User, AnalysisPredictionResponse, AnalysisListItem, ModelMetadata, ContactForm, AdminStats } from '../types';
+import { AuthState, User, AnalysisPredictionResponse, AnalysisListItem, ModelMetadata, ContactForm, MriValidationResult } from '../types';
 
 const API_BASE = '/api';
 
@@ -83,6 +83,33 @@ export const authApi = {
 
 // MRI Analysis API
 export const analysisApi = {
+  async validateMri(file: File): Promise<MriValidationResult> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const token = localStorage.getItem('neuroscan_token');
+    const response = await fetch(`${API_BASE}/analysis/validate`, {
+      method: 'POST',
+      headers: {
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+      },
+      body: formData
+    });
+
+    if (!response.ok) {
+      let errorMsg = 'Failed to validate MRI file.';
+      try {
+        const errData = await response.json();
+        if (errData.detail) errorMsg = errData.detail;
+      } catch (e) {
+        errorMsg = response.statusText;
+      }
+      throw new ApiError(errorMsg, response.status);
+    }
+
+    return response.json();
+  },
+
   async predictMri(file: File): Promise<AnalysisPredictionResponse> {
     const formData = new FormData();
     formData.append('file', file);
@@ -176,12 +203,5 @@ export const reportsApi = {
     link.click();
     document.body.removeChild(link);
     window.URL.revokeObjectURL(blobUrl);
-  }
-};
-
-// Admin API
-export const adminApi = {
-  async getStats(): Promise<AdminStats> {
-    return request<AdminStats>('/admin/stats');
   }
 };

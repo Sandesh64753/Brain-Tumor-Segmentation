@@ -8,7 +8,7 @@ from app.core.config import settings
 from app.database.base import Base
 from app.database.session import engine
 from app.ml.model_loader import model_loader
-from app.api import auth, analysis, reports, contact, models, admin
+from app.api import auth, analysis, reports, contact, models
 
 # Configure logging
 logging.basicConfig(
@@ -59,7 +59,6 @@ app.include_router(analysis.router, prefix=settings.API_V1_STR)
 app.include_router(reports.router, prefix=settings.API_V1_STR)
 app.include_router(contact.router, prefix=settings.API_V1_STR)
 app.include_router(models.router, prefix=settings.API_V1_STR)
-app.include_router(admin.router, prefix=settings.API_V1_STR)
 
 @app.get("/api/health", tags=["Health Check"])
 def health_check():

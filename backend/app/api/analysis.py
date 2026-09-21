@@ -2,6 +2,7 @@ import os
 import uuid
 import time
 import json
+import numpy as np
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Query, status
 from sqlalchemy.orm import Session
@@ -9,17 +10,73 @@ from app.api.deps import get_db, get_current_user
 from app.core.config import settings
 from app.models.user import User
 from app.models.analysis import Analysis
-from app.schemas.analysis import AnalysisPredictionResponse, AnalysisListItem, ClassificationResult, SegmentationResult, Visualizations
+from app.schemas.analysis import (
+    AnalysisPredictionResponse,
+    AnalysisListItem,
+    ClassificationResult,
+    SegmentationResult,
+    Visualizations,
+    MriValidationResponse
+)
 from app.utils.image_utils import load_image_as_rgb, save_numpy_as_image, create_combined_overlay
 from app.utils.dicom_utils import is_dicom_file, read_dicom_as_rgb
 from app.services.classification_service import classification_service
 from app.services.segmentation_service import segmentation_service
 from app.services.gradcam_service import gradcam_service
 from app.services.report_service import report_service
+from app.services.gatekeeper_service import gatekeeper_service
 
 router = APIRouter(prefix="/analysis", tags=["MRI Analysis"])
 
 ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".dcm", ".dicom"}
+
+
+@router.post("/validate", response_model=MriValidationResponse)
+async def validate_mri_file(
+    file: UploadFile = File(...)
+):
+    """
+    Fast Gatekeeper validation endpoint.
+    Checks whether the uploaded file is a valid brain MRI scan using 2-stage verification:
+    1. Heuristic filters (colors, variance, resolution)
+    2. ConvAutoencoder reconstruction error comparison against calibrated threshold
+    """
+    filename = file.filename or "scan.png"
+    ext = os.path.splitext(filename)[1].lower()
+    if ext not in ALLOWED_EXTENSIONS:
+        return MriValidationResponse(
+            is_mri=False,
+            stage="format_error",
+            reason=f"Unsupported format '{ext}'. Allowed: JPG, PNG, DICOM (.dcm).",
+            recon_error=None,
+            threshold=0.001505,
+            message="Invalid file format."
+        )
+
+    content = await file.read()
+    temp_path = os.path.join(settings.UPLOAD_DIR, f"val_temp_{uuid.uuid4()}_{filename}")
+    try:
+        with open(temp_path, "wb") as f:
+            f.write(content)
+
+        val_result = gatekeeper_service.validate_file(temp_path)
+        return MriValidationResponse(**val_result)
+    except Exception as e:
+        return MriValidationResponse(
+            is_mri=False,
+            stage="exception",
+            reason=str(e),
+            recon_error=None,
+            threshold=0.001505,
+            message=f"Validation error: {str(e)}"
+        )
+    finally:
+        if os.path.exists(temp_path):
+            try:
+                os.remove(temp_path)
+            except Exception:
+                pass
+
 
 @router.post("/predict", response_model=AnalysisPredictionResponse)
 async def predict_mri(
@@ -69,6 +126,21 @@ async def predict_mri(
             detail=f"Unable to process this image. Please verify that the uploaded file is a valid MRI image. Error: {str(e)}"
         )
 
+    # 0. Gatekeeper MRI Validation Check
+    val_result = gatekeeper_service.validate_image_array(rgb_numpy)
+    if not val_result.get("is_mri", False):
+        # Clean up saved upload if not a valid MRI
+        if os.path.exists(upload_file_path):
+            try:
+                os.remove(upload_file_path)
+            except Exception:
+                pass
+        reason_msg = val_result.get("reason") or "Image does not match MRI characteristics."
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"MRI Gatekeeper Validation Failed: The uploaded image is un-validated and was rejected (Reason: {reason_msg}). Tumor detection was not performed."
+        )
+
     # 1. Classification
     predicted_class, confidence, probabilities = classification_service.predict(rgb_numpy)
     
@@ -77,7 +149,17 @@ async def predict_mri(
     target_class_idx = class_names.index(predicted_class) if predicted_class in class_names else 0
 
     # 2. Segmentation
-    binary_mask, tumor_detected, tumor_pixels, area_percentage, dice_score, iou_score = segmentation_service.predict(rgb_numpy)
+    # If classification says "No Tumor", skip UNet and produce a blank mask
+    if predicted_class == "No Tumor":
+        orig_h, orig_w = rgb_numpy.shape[:2]
+        binary_mask = np.zeros((orig_h, orig_w), dtype=np.uint8)
+        tumor_detected = False
+        tumor_pixels = 0
+        area_percentage = 0.0
+        dice_score = None
+        iou_score = None
+    else:
+        binary_mask, tumor_detected, tumor_pixels, area_percentage, dice_score, iou_score = segmentation_service.predict(rgb_numpy)
 
     # 3. Grad-CAM Heatmap
     gradcam_heatmap = gradcam_service.generate_heatmap(rgb_numpy, target_class_idx=target_class_idx)
